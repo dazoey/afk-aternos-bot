@@ -565,7 +565,21 @@ function createBot() {
 
     bot.on('error', (err) => {
       const msg = err.message || '';
-      console.log(`[Bot] Error: ${msg}`);
+
+      // FIX: Improved error messaging for the user
+      if (msg.includes('ECONNRESET')) {
+        console.log(`[Bot] Error: Connection Reset (ECONNRESET).`);
+        console.log(`      Tip: Ini normal di Aternos jika server baru saja dinyalakan. Bot akan mencoba menyambung ulang otomatis.`);
+      } else if (msg.includes('ETIMEDOUT')) {
+        console.log(`[Bot] Error: Connection Timed Out (ETIMEDOUT).`);
+        console.log(`      Tip: Periksa apakah IP dan Port di settings.json sudah benar dan server sedang Online.`);
+      } else if (msg.includes('ECONNREFUSED')) {
+        console.log(`[Bot] Error: Connection Refused (ECONNREFUSED).`);
+        console.log(`      Tip: Server menolak koneksi. Pastikan server sudah benar-benar Online di panel Aternos.`);
+      } else {
+        console.log(`[Bot] Error: ${msg}`);
+      }
+
       botState.errors.push({ type: 'error', message: msg, time: Date.now() });
       // Don't reconnect on error - let 'end' event handle it
     });
